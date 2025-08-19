@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>심폐소생술 시각화</title>
+<style>
+  body { display:flex; justify-content:center; align-items:center; height:100vh; background:#f5f5f5; flex-direction:column; font-family:sans-serif; }
+  .container {
+    display:flex; align-items:center; justify-content:center; gap:40px;
+  }
+  .bar {
+    width: 80px; height: 200px;
+    background: blue;
+    border-radius: 20px;
+    position: relative;
+    animation: compress 0.55s infinite ease-in-out;
+    transform-origin: bottom center;
+  }
+  @keyframes compress {
+    0%,100% { transform: scaleY(1); background: blue; }   /* 이완 (파랑, 원래 높이) */
+    50% { transform: scaleY(0.2); background: red; }      /* 압박 (빨강, 바닥까지) */
+  }
+  img { width:200px; height:auto; }
+</style>
+</head>
+<body>
+  <h2>심폐소생술 압박/이완 훈련</h2>
+  <div class="container">
+    <img src="press.png.png" alt="압박 이미지">
+    <div class="bar"></div>
+    <img src="release.png.png" alt="이완 이미지">
+  </div>
+  <p>속도: 분당 100~120회 속도, 깊이: 5cm</p>
+  <script>
+    // 오디오 컨텍스트
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function metronome(){
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.type = "square";  // "땅" 같은 짧은 소리
+      osc.frequency.value = 1000;
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      osc.start();
+      setTimeout(()=>{osc.stop()}, 120); // 짧은 타격음
+    }
+    // 110회/분 = 약 545ms 간격
+    setInterval(()=>{ 
+      metronome();
+    }, 545);
+  </script>
+</body>
+</html>
